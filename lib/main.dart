@@ -132,8 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: _stopTimer,
               child: new Text("Stop"),
              ),
-            SizedBox(height: 50),
-            _signInButton()
+
           ],
         ),
       ),
