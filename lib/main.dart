@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'first_screen.dart';
-import 'sign_in.dart';
 
 void main() => runApp(MyApp());
 
@@ -33,65 +30,35 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn googleSignIn = GoogleSignIn();
   int _currentValue = 1;
-
+  bool _state = false;
 
   void _startTimer() {
-    FirebaseDatabase.instance.reference().child('countdown')
-      .set({
-      'start': true,
-      'time': _currentValue,
-    });
+    _state = true;
+    _setTimer();
   }
 
   void _stopTimer() {
+    _state = false;
+    _setTimer();
+  }
+
+  void _changeTimer(_newTime) {
+    _state = false;
+    _currentValue = _newTime;
+    _setTimer();
+    
+  }
+
+  void _setTimer() {
+    print(_currentValue);
+    print(_state);
     FirebaseDatabase.instance.reference().child('countdown')
-        .set({
-      'start': false
-    });
+      .set({
+        'start': _state,
+        'time': _currentValue
+      });
   }
-
-  Widget _signInButton() {
-    return OutlineButton(
-      splashColor: Colors.grey,
-      onPressed: () {
-        signInWithGoogle().whenComplete(() {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) {
-                return FirstScreen();
-              },
-            ),
-          );
-        });
-      },
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-      highlightElevation: 0,
-      borderSide: BorderSide(color: Colors.grey),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image(image: AssetImage("assets/google_logo.png"), height: 35.0),
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Text(
-                'Sign in with Google',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.grey,
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 minValue: 1,
                 maxValue: 30,
                 onChanged: (newValue) =>
-                    setState(() => _currentValue = newValue)),
+                    setState(() => _changeTimer(newValue))),
             new RaisedButton(
               padding: const EdgeInsets.all(8.0),
               textColor: Colors.white,
