@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:countdown_flutter/countdown_flutter.dart';
 
 void main() => runApp(MyApp());
 
@@ -30,33 +31,42 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _currentValue = 1;
   bool _state = false;
+  String _countdown;
 
-  void _startTimer() {
+  void _startCountdown() {
     _state = true;
-    _setTimer();
+    updateCountdown();
   }
 
-  void _stopTimer() {
+  void _stopCountdown() {
     _state = false;
-    _setTimer();
+    updateCountdown();
   }
 
   void _changeTimer(_newTime) {
     _state = false;
     _currentValue = _newTime;
-    _setTimer();
+    updateCountdown();
     
   }
 
-  void _setTimer() {
+  void updateCountdown() {
     print(_currentValue);
     print(_state);
+    print(_countdown);
     FirebaseDatabase.instance.reference().child('countdown')
-      .set({
+      .update({
         'start': _state,
         'time': _currentValue
       });
   }
+
+  void getCountdown(){
+    FirebaseDatabase.instance.reference().once().then((DataSnapshot snapshot) {
+      print('Data : ${snapshot.value}');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,13 +74,19 @@ class _MyHomePageState extends State<MyHomePage> {
         child: new Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              '0:00',
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: new TextStyle(
+            Center(
+              child: CountdownFormatted(
+                duration: Duration(minutes: _currentValue),
+                builder: (BuildContext ctx, String remaining) {
+                  return Text(
+                    remaining,
+                    overflow: TextOverflow.ellipsis,
+                    style: new TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 100),
+                  ); // 01:00:00
+                },
+              ),
             ),
             SizedBox(height: 80),
             new Text(
@@ -87,14 +103,14 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.all(8.0),
               textColor: Colors.white,
               color: Colors.pink,
-              onPressed: _startTimer,
+              onPressed: _startCountdown,
               child: new Text("Start"),
             ),
             new RaisedButton(
               padding: const EdgeInsets.all(8.0),
               textColor: Colors.white,
               color: Colors.pink,
-              onPressed: _stopTimer,
+              onPressed: _stopCountdown,
               child: new Text("Stop"),
              ),
 
