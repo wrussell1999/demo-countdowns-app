@@ -43,24 +43,18 @@ class _MyHomePageState extends State<MyHomePage> {
   void _startCountdown() {
     _state = true;
     updateCountdown();
-    int _start = _currentValue;
     countdownTimer = new CountdownTimer(
       new Duration(minutes: _currentValue),
       new Duration(seconds: 1),
     );
 
     var sub = countdownTimer.listen(null);
-    int second_pad = 60;
 
     sub.onData((duration) {
       setState(() { 
-        int minutes = _start - duration.elapsed.inMinutes - 1;
-        int seconds = second_pad - duration.elapsed.inSeconds;
-        if (seconds == 0 && minutes > 1) {
-          second_pad += 60;
-        } 
-        String seconds_str = seconds.toString().padLeft(2, '0');
-        _countdown = "$minutes:$seconds_str"; 
+        int minutes = duration.remaining.inMinutes;
+        String seconds = (duration.remaining.inSeconds % 60).toString().padLeft(2, '0');
+        _countdown = "$minutes:$seconds"; 
     });
 
     sub.onDone(() {
