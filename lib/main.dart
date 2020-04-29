@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:quiver/async.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.pink,
       ),
-      home: MyHomePage(title: 'Hackathon Demo Countdown Controller'),
+      home: MyHomePage(title: 'Countdown Controller'),
     );
   }
 }
@@ -28,18 +31,40 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final database = FirebaseDatabase.instance.reference().child('countdown');
+
+  StreamSubscription _subscriptionTime;
+
   int _currentValue = 1;
+  int _current = 10;
   bool _state = false;
   String _countdown = "0:00";
+  CountdownTimer countdownTimer;
 
   void _startCountdown() {
     _state = true;
     updateCountdown();
+    countdownTimer = new CountdownTimer(
+      new Duration(minutes: _currentValue),
+      new Duration(seconds: 1),
+    );
+
+    var sub = countdownTimer.listen(null);
+    sub.onData((duration) {
+      setState(() { _current = _currentValue - duration.elapsed.inSeconds; 
+    });
+
+    sub.onDone(() {
+      print("Done");
+      sub.cancel();
+    });
+  });
+    
   }
 
   void _stopCountdown() {
     _state = false;
     updateCountdown();
+    countdownTimer.cancel();
   }
 
   void _changeCountdown(_newTime) {
@@ -48,6 +73,9 @@ class _MyHomePageState extends State<MyHomePage> {
     updateCountdown();
     
   }
+  void listenForChanges() {
+    StreamSubscription<Event> subscription = database.onValue.listen((event) {print(event.snapshot.value.toString());});
+  }
 
   void updateCountdown() {
     database
@@ -55,17 +83,25 @@ class _MyHomePageState extends State<MyHomePage> {
         'start': _state,
         'time': _currentValue
       });
-    getCountdown();
-    _countdown = "$_currentValue:00";
+    if (!_state) {
+      getCountdown();
+      _countdown = "$_currentValue:00";
+    }
   }
 
-  void getCountdown(){
+  void getCountdown() {
     database.once().then((DataSnapshot snapshot) {
       print('Data : ${snapshot.value}');
       Map<dynamic, dynamic> map = snapshot.value;
       var minutes = map.values.toList()[1];
       _countdown = "$minutes:00";
     });
+  }
+
+  @override
+  void initState() {
+    //listenForChanges();
+    super.initState();
   }
 
   @override
@@ -76,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              "$_countdown",
+              "$_current",
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               style: new TextStyle(
@@ -85,8 +121,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             SizedBox(height: 80),
             new Text(
-                "$_currentValue Minutes",
-                style: TextStyle(fontSize: 30),
+                "Set Minutes:",
+                style: TextStyle(fontSize: 25),
             ),
             new NumberPicker.integer(
                 initialValue: _currentValue,
@@ -108,7 +144,6 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: _stopCountdown,
               child: new Text("Stop"),
              ),
-
           ],
         ),
       ),
@@ -118,3 +153,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
