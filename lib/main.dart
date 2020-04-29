@@ -52,6 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
         int minutes = duration.remaining.inMinutes;
         String seconds = (duration.remaining.inSeconds % 60).toString().padLeft(2, '0');
         _countdownText = "$minutes:$seconds"; 
+        print(_countdownText);
       });
 
       sub.onDone(() {
@@ -116,25 +117,35 @@ class _MyHomePageState extends State<MyHomePage> {
               stream: database.onValue,
               builder: (context, snap) {
                 if (snap.hasData && !snap.hasError && snap.data.snapshot.value != null) {
-                  Map data = snap.data.snapshot.value;
-                  _countdownTime = data['time'];
-                  _countdownText = "$_countdownTime:00";
-                  return Padding(
-                    padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
-                    child: Column (
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          "$_countdownText",
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
-                          style: new TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 100),
-                        ),
-                      ]
-                    )
-                  );
+                  if (_state == false) {
+                    Map data = snap.data.snapshot.value;
+                    _countdownTime = data['time'];
+                    _countdownText = "$_countdownTime:00";
+                    return 
+                      Column (
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "$_countdownText",
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                            style: new TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 100),
+                          ),
+                        ]
+                      );
+                  } else if (_state == true) {
+                    return 
+                      Text(
+                        "$_countdownText",
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 100),
+                      );
+                  }
                 }
                 else
                   return Text("Error: No Time");
@@ -178,7 +189,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   
                   Map data = snap.data.snapshot.value;
                   _state = data['start'];
-                  //_countdownText = "$_countdownTime:00";
                   return Padding(
                     padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
                     child: Column (
