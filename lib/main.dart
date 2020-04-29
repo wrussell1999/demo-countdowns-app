@@ -34,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _countdownTime = 3;
   bool _state = false;
-  String _countdown = "0:00";
+  String _countdownText = "0:00";
   CountdownTimer countdownTimer;
 
   void _startCountdown() {
@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() { 
         int minutes = duration.remaining.inMinutes;
         String seconds = (duration.remaining.inSeconds % 60).toString().padLeft(2, '0');
-        _countdown = "$minutes:$seconds"; 
+        _countdownText = "$minutes:$seconds"; 
       });
 
       sub.onDone(() {
@@ -85,15 +85,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void _stopCountdown() {
     _state = false;
     updateCountdown();
-    _countdown = "0:00";
+    _countdownText = "0:00";
     countdownTimer.cancel();
   }
 
   void _changeCountdown(_newTime) {
-    _state = false;
     _countdownTime = _newTime;
     updateCountdown();
-    
   }
 
   void updateCountdown() {
@@ -102,14 +100,6 @@ class _MyHomePageState extends State<MyHomePage> {
         'start': _state,
         'time': _countdownTime
       });
-  }
-
-  void getCountdown() {
-    database.once().then((DataSnapshot snapshot) {
-      print('Data : ${snapshot.value}');
-      Map<dynamic, dynamic> map = snapshot.value;
-      _countdownTime = map.values.toList()[1];
-    });
   }
 
   @override
@@ -122,13 +112,33 @@ class _MyHomePageState extends State<MyHomePage> {
         child: new Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              "$_countdown",
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: new TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 100),
+            StreamBuilder(
+              stream: database.onValue,
+              builder: (context, snap) {
+                if (snap.hasData && !snap.hasError && snap.data.snapshot.value != null) {
+                  Map data = snap.data.snapshot.value;
+                  _countdownTime = data['time'];
+                  _countdownText = "$_countdownTime:00";
+                  return Padding(
+                    padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+                    child: Column (
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          "$_countdownText",
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          style: new TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 100),
+                        ),
+                      ]
+                    )
+                  );
+                }
+                else
+                  return Text("Error: No Time");
+              },
             ),
             SizedBox(height: 80),
             new Text(
@@ -167,16 +177,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (snap.hasData && !snap.hasError && snap.data.snapshot.value != null) {
                   
                   Map data = snap.data.snapshot.value;
-                  _countdownTime = data['time'];
                   _state = data['start'];
-
+                  //_countdownText = "$_countdownTime:00";
                   return Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
                     child: Column (
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Text("start: $_state"),
-                        Text("time: $_countdownTime")
+                        Text("Firebase Database", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                        Text("start: $_state", style: TextStyle(fontSize: 16)),
+                        Text("time: $_countdownTime", style: TextStyle(fontSize: 16))
                     ])
                   );
                 }
