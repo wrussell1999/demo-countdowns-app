@@ -55,14 +55,38 @@ class _MyHomePageState extends State<MyHomePage> {
         int minutes = duration.remaining.inMinutes;
         String seconds = (duration.remaining.inSeconds % 60).toString().padLeft(2, '0');
         _countdown = "$minutes:$seconds"; 
-    });
+      });
 
-    sub.onDone(() {
-      print("Done");
-      sub.cancel();
+      sub.onDone(() {
+        showAlertDialog(context);
+        sub.cancel();
+      });
     });
-  });
-    
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () { Navigator.of(context).pop();},
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Demo finished"),
+      content: Text("Please get the next team ready for demoing!"),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   void _stopCountdown() {
