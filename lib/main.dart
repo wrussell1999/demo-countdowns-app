@@ -34,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   StreamSubscription _subscriptionTime;
 
-  int _currentValue = 1;
+  int _currentValue = 3;
   int _current = 10;
   bool _state = false;
   String _countdown = "0:00";
@@ -43,14 +43,24 @@ class _MyHomePageState extends State<MyHomePage> {
   void _startCountdown() {
     _state = true;
     updateCountdown();
+    int _start = _currentValue;
     countdownTimer = new CountdownTimer(
       new Duration(minutes: _currentValue),
       new Duration(seconds: 1),
     );
 
     var sub = countdownTimer.listen(null);
+    int second_pad = 60;
+
     sub.onData((duration) {
-      setState(() { _current = _currentValue - duration.elapsed.inSeconds; 
+      setState(() { 
+        int minutes = _start - duration.elapsed.inMinutes - 1;
+        int seconds = second_pad - duration.elapsed.inSeconds;
+        if (seconds == 0 && minutes > 1) {
+          second_pad += 60;
+        } 
+        String seconds_str = seconds.toString().padLeft(2, '0');
+        _countdown = "$minutes:$seconds_str"; 
     });
 
     sub.onDone(() {
@@ -65,6 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _state = false;
     updateCountdown();
     countdownTimer.cancel();
+    _countdown = "0:00";
   }
 
   void _changeCountdown(_newTime) {
@@ -85,7 +96,6 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     if (!_state) {
       getCountdown();
-      _countdown = "$_currentValue:00";
     }
   }
 
@@ -93,8 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
     database.once().then((DataSnapshot snapshot) {
       print('Data : ${snapshot.value}');
       Map<dynamic, dynamic> map = snapshot.value;
-      var minutes = map.values.toList()[1];
-      _countdown = "$minutes:00";
+      _currentValue = map.values.toList()[1];
     });
   }
 
@@ -112,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              "$_current",
+              "$_countdown",
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               style: new TextStyle(
@@ -127,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
             new NumberPicker.integer(
                 initialValue: _currentValue,
                 minValue: 1,
-                maxValue: 15,
+                maxValue: 9,
                 onChanged: (newValue) =>
                     setState(() => _changeCountdown(newValue))),
             new RaisedButton(
