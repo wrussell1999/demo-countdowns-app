@@ -35,11 +35,20 @@ class _MyHomePageState extends State<MyHomePage> {
   int _countdownTime = 1;
   bool _state = false;
   String _countdownText = "0:00";
+  var _countdownTimeStamp = DateTime.now().toUtc();
   CountdownTimer countdownTimer;
 
   void _startCountdown() {
     _state = true;
+
+
+    var now = DateTime.now().toUtc();
+    print("Now: $now");
+    _countdownTimeStamp = now.toUtc().add(Duration(minutes: _countdownTime));
+    print("Then: $_countdownTimeStamp");
+
     updateCountdown();
+    // Work out in seconds how long left
     countdownTimer = new CountdownTimer(
       new Duration(minutes: _countdownTime),
       new Duration(seconds: 1),
@@ -99,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
     database
       .update({
         'start': _state,
-        'time': _countdownTime
+        'timestamp': _countdownTimeStamp
       });
   }
 
