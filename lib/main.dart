@@ -32,7 +32,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final database = FirebaseDatabase.instance.reference().child('countdown');
 
-  int _countdownTime = 3;
+  int _countdownTime = 1;
   bool _state = false;
   String _countdownText = "0:00";
   CountdownTimer countdownTimer;
