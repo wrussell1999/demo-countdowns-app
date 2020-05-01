@@ -34,41 +34,70 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _countdownTime = 1;
   bool _state = false;
-  String _countdownText = "0:00";
-  var _countdownTimeStamp = DateTime.now().toUtc();
+  DateTime _countdownTimeStamp = DateTime.now().toUtc();
   CountdownTimer countdownTimer;
+  String _countdownText = "0:00";
+  bool deviceState = false;
 
   void _startCountdown() {
     _state = true;
-
-
+    deviceState = true;
+    // Work out in milliseconds how long left
     var now = DateTime.now().toUtc();
-    print("Now: $now");
-    _countdownTimeStamp = now.toUtc().add(Duration(minutes: _countdownTime));
-    print("Then: $_countdownTimeStamp");
-
+    _countdownTimeStamp = DateTime.now().toUtc().add(Duration(minutes: _countdownTime));
+    var diff = _countdownTimeStamp.difference(now);
     updateCountdown();
-    // Work out in seconds how long left
+    _doCountdown(diff.inSeconds);
+  }
+
+  void _stopCountdown() {
+    _state = false;
+    deviceState = false;
+    updateCountdown();
+    _countdownText = "0:00";
+    countdownTimer.cancel();
+  }
+
+  void _changeCountdown(_newTime) {
+    _countdownTime = _newTime;
+    _countdownTimeStamp = DateTime.now().toUtc().add(Duration(minutes: _newTime));
+    updateCountdown();
+  }
+
+  void updateCountdown() {
+    database.update({
+        'start': _state,
+        'time': _countdownTime,
+        'timestamp': _countdownTimeStamp.toString()
+      });
+  }
+
+  void _doCountdown(var countdownSeconds) {
+    _state = true;
+    updateCountdown();
+    // Start Countdown
     countdownTimer = new CountdownTimer(
-      new Duration(minutes: _countdownTime),
+      new Duration(seconds: countdownSeconds),
       new Duration(seconds: 1),
     );
 
     var sub = countdownTimer.listen(null);
 
     sub.onData((duration) {
-      setState(() { 
+      setState(() {
+
         int minutes = duration.remaining.inMinutes;
         String seconds = (duration.remaining.inSeconds % 60).toString().padLeft(2, '0');
         _countdownText = "$minutes:$seconds"; 
-        print(_countdownText);
       });
 
       sub.onDone(() {
         showAlertDialog(context);
+        _state = false;
+        updateCountdown();
         sub.cancel();
       });
-    });
+    }); 
   }
 
   // Alert user that countdown has finished
@@ -90,26 +119,6 @@ class _MyHomePageState extends State<MyHomePage> {
         return alert;
       },
     );
-  }
-
-  void _stopCountdown() {
-    _state = false;
-    updateCountdown();
-    _countdownText = "0:00";
-    countdownTimer.cancel();
-  }
-
-  void _changeCountdown(_newTime) {
-    _countdownTime = _newTime;
-    updateCountdown();
-  }
-
-  void updateCountdown() {
-    database
-      .update({
-        'start': _state,
-        'timestamp': _countdownTimeStamp
-      });
   }
 
   @override
@@ -169,8 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 initialValue: _countdownTime,
                 minValue: 1,
                 maxValue: 9,
-                onChanged: (newValue) =>
-                    setState(() => _changeCountdown(newValue))),
+                onChanged: (newValue) => setState(() => _changeCountdown(newValue))),
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -198,14 +206,32 @@ class _MyHomePageState extends State<MyHomePage> {
                   
                   Map data = snap.data.snapshot.value;
                   _state = data['start'];
+                  _countdownTime = data['time'];
+                  _countdownTimeStamp = DateTime.parse(data['timestamp']);
+
+                  // Check if another device has triggered the countdown
+                  if (_state == true && deviceState == false) {
+                    var now = DateTime.now().toUtc();
+                    var diff = _countdownTimeStamp.difference(now);
+                    _doCountdown(diff.inSeconds);
+                  }
+
                   return Padding(
-                    padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
                     child: Column (
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
+                        RaisedButton.icon(
+                          textColor: Colors.white,
+                          color: Colors.orange,
+                          onPressed: () => _doCountdown(_countdownTimeStamp.millisecondsSinceEpoch),
+                          label: Text("Remote Override"),
+                          icon: Icon(Icons.publish),
+                          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),),
                         Text("Firebase Database", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                         Text("start: $_state", style: TextStyle(fontSize: 16)),
-                        Text("time: $_countdownTime", style: TextStyle(fontSize: 16))
+                        Text("time: $_countdownTime", style: TextStyle(fontSize: 16)),
+                        Text("timestamp: $_countdownTimeStamp", style: TextStyle(fontSize: 16))
                     ])
                   );
                 }
