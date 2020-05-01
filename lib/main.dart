@@ -34,18 +34,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _countdownTime = 1;
   bool _state = false;
-  DateTime _countdownTimeStamp = DateTime.now().toUtc();
+  int _secondsSinceEpoch = DateTime.now().millisecondsSinceEpoch;
   CountdownTimer countdownTimer;
   String _countdownText = "0:00";
 
   void _startCountdown() {
     _state = true;
     // Work out in milliseconds how long left
-    var now = DateTime.now().toUtc();
-    _countdownTimeStamp = DateTime.now().toUtc().add(Duration(minutes: _countdownTime));
-    var diff = _countdownTimeStamp.difference(now);
+    var now = DateTime.now().millisecondsSinceEpoch;
+    _secondsSinceEpoch = DateTime.now().add(Duration(minutes: _countdownTime)).millisecondsSinceEpoch;
+    var diff =  _secondsSinceEpoch - now;
     updateCountdown();
-    _doCountdown(diff.inSeconds);
+    _doCountdown(_secondsSinceEpoch);
   }
 
   void _stopCountdown() {
@@ -57,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _changeCountdown(_newTime) {
     _countdownTime = _newTime;
-    _countdownTimeStamp = DateTime.now().toUtc().add(Duration(minutes: _newTime));
+    _secondsSinceEpoch = DateTime.now().toUtc().add(Duration(minutes: _newTime)).millisecondsSinceEpoch;
     updateCountdown();
   }
 
@@ -65,16 +65,16 @@ class _MyHomePageState extends State<MyHomePage> {
     database.update({
         'start': _state,
         'time': _countdownTime,
-        'timestamp': _countdownTimeStamp.toString()
+        'timestamp': _secondsSinceEpoch
       });
   }
 
-  void _doCountdown(var countdownSeconds) {
+  void _doCountdown(var countdownMilliseconds) {
     _state = true;
     updateCountdown();
     // Start Countdown
     countdownTimer = new CountdownTimer(
-      new Duration(seconds: countdownSeconds),
+      new Duration(milliseconds: countdownMilliseconds),
       new Duration(seconds: 1),
     );
 
@@ -204,13 +204,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   Map data = snap.data.snapshot.value;
                   _state = data['start'];
                   _countdownTime = data['time'];
-                  _countdownTimeStamp = DateTime.parse(data['timestamp']);
+                  _secondsSinceEpoch = data['timestamp'];
 
                   // Check if another device has triggered the countdown
                   if (_state == true && countdownTimer.isRunning) {
-                    var now = DateTime.now().toUtc();
-                    var diff = _countdownTimeStamp.difference(now);
-                    _doCountdown(diff.inSeconds);
+                    var now = DateTime.now().toUtc().millisecondsSinceEpoch;
+                    var diff = _secondsSinceEpoch - now;
+                    _doCountdown(diff);
                   }
 
                   return Padding(
@@ -221,14 +221,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         RaisedButton.icon(
                           textColor: Colors.white,
                           color: Colors.orange,
-                          onPressed: () => _doCountdown(_countdownTimeStamp.millisecondsSinceEpoch),
+                          onPressed: () => _doCountdown(_secondsSinceEpoch),
                           label: Text("Remote Override"),
                           icon: Icon(Icons.publish),
                           shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),),
                         Text("Firebase Database", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                         Text("start: $_state", style: TextStyle(fontSize: 16)),
                         Text("time: $_countdownTime", style: TextStyle(fontSize: 16)),
-                        Text("timestamp: $_countdownTimeStamp", style: TextStyle(fontSize: 16))
+                        Text("timestamp: $_secondsSinceEpoch", style: TextStyle(fontSize: 16))
                     ])
                   );
                 }
