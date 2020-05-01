@@ -34,18 +34,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _countdownTime = 1;
   bool _state = false;
-  int _secondsSinceEpoch = (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round();
+  int _secondsSinceEpoch = DateTime.now().toUtc().millisecondsSinceEpoch;
   CountdownTimer countdownTimer;
   String _countdownText = "0:00";
 
   void _startCountdown() {
     _state = true;
     // Work out in milliseconds how long left
-    var now = (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round();
-    _secondsSinceEpoch = (DateTime.now().add(Duration(minutes: _countdownTime)).millisecondsSinceEpoch / 1000).round();
+    var now = DateTime.now().toUtc().millisecondsSinceEpoch;
+    _secondsSinceEpoch = DateTime.now().add(Duration(minutes: _countdownTime)).millisecondsSinceEpoch;
     var diff =  _secondsSinceEpoch - now;
     updateCountdown();
-    _doCountdown(_secondsSinceEpoch);
+    _doCountdown(diff);
   }
 
   void _stopCountdown() {
@@ -57,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _changeCountdown(_newTime) {
     _countdownTime = _newTime;
-    _secondsSinceEpoch = (DateTime.now().toUtc().add(Duration(minutes: _newTime)).millisecondsSinceEpoch / 1000).round();
+    _secondsSinceEpoch = DateTime.now().toUtc().add(Duration(minutes: _newTime)).millisecondsSinceEpoch;
     updateCountdown();
   }
 
@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
     updateCountdown();
     // Start Countdown
     countdownTimer = new CountdownTimer(
-      new Duration(seconds: length),
+      new Duration(milliseconds: length),
       new Duration(seconds: 1),
     );
 
@@ -136,31 +136,19 @@ class _MyHomePageState extends State<MyHomePage> {
                     Map data = snap.data.snapshot.value;
                     _countdownTime = data['time'];
                     _countdownText = "$_countdownTime:00";
-                    return 
-                      Column (
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "$_countdownText",
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
-                            style: new TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 100),
-                          ),
-                        ]
-                      );
-                  } else if (_state == true) {
-                    return 
-                      Text(
-                        "$_countdownText",
+                  } 
+                  return Column (
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Text("$_countdownText",
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         style: new TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 100),
-                      );
-                  }
+                      ),
+                    ]
+                  );
                 }
                 else
                   return Text("Error: No Time");
@@ -208,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   // Check if another device has triggered the countdown
                   if (_state == true && countdownTimer.isRunning) {
-                    var now = (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round();
+                    var now = DateTime.now().toUtc().millisecondsSinceEpoch;
                     var diff = _secondsSinceEpoch - now;
                     _doCountdown(diff);
                   }
