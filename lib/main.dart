@@ -37,11 +37,9 @@ class _MyHomePageState extends State<MyHomePage> {
   DateTime _countdownTimeStamp = DateTime.now().toUtc();
   CountdownTimer countdownTimer;
   String _countdownText = "0:00";
-  bool deviceState = false;
 
   void _startCountdown() {
     _state = true;
-    deviceState = true;
     // Work out in milliseconds how long left
     var now = DateTime.now().toUtc();
     _countdownTimeStamp = DateTime.now().toUtc().add(Duration(minutes: _countdownTime));
@@ -52,7 +50,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _stopCountdown() {
     _state = false;
-    deviceState = false;
     updateCountdown();
     _countdownText = "0:00";
     countdownTimer.cancel();
@@ -210,7 +207,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   _countdownTimeStamp = DateTime.parse(data['timestamp']);
 
                   // Check if another device has triggered the countdown
-                  if (_state == true && deviceState == false) {
+                  if (_state == true && countdownTimer.isRunning) {
                     var now = DateTime.now().toUtc();
                     var diff = _countdownTimeStamp.difference(now);
                     _doCountdown(diff.inSeconds);
