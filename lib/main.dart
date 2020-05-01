@@ -34,15 +34,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _countdownTime = 1;
   bool _state = false;
-  int _secondsSinceEpoch = DateTime.now().millisecondsSinceEpoch;
+  int _secondsSinceEpoch = (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round();
   CountdownTimer countdownTimer;
   String _countdownText = "0:00";
 
   void _startCountdown() {
     _state = true;
     // Work out in milliseconds how long left
-    var now = DateTime.now().millisecondsSinceEpoch;
-    _secondsSinceEpoch = DateTime.now().add(Duration(minutes: _countdownTime)).millisecondsSinceEpoch;
+    var now = (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round();
+    _secondsSinceEpoch = (DateTime.now().add(Duration(minutes: _countdownTime)).millisecondsSinceEpoch / 1000).round();
     var diff =  _secondsSinceEpoch - now;
     updateCountdown();
     _doCountdown(_secondsSinceEpoch);
@@ -57,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _changeCountdown(_newTime) {
     _countdownTime = _newTime;
-    _secondsSinceEpoch = DateTime.now().toUtc().add(Duration(minutes: _newTime)).millisecondsSinceEpoch;
+    _secondsSinceEpoch = (DateTime.now().toUtc().add(Duration(minutes: _newTime)).millisecondsSinceEpoch / 1000).round();
     updateCountdown();
   }
 
@@ -69,12 +69,12 @@ class _MyHomePageState extends State<MyHomePage> {
       });
   }
 
-  void _doCountdown(var countdownMilliseconds) {
+  void _doCountdown(var length) {
     _state = true;
     updateCountdown();
     // Start Countdown
     countdownTimer = new CountdownTimer(
-      new Duration(milliseconds: countdownMilliseconds),
+      new Duration(seconds: length),
       new Duration(seconds: 1),
     );
 
@@ -208,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   // Check if another device has triggered the countdown
                   if (_state == true && countdownTimer.isRunning) {
-                    var now = DateTime.now().toUtc().millisecondsSinceEpoch;
+                    var now = (DateTime.now().toUtc().millisecondsSinceEpoch / 1000).round();
                     var diff = _secondsSinceEpoch - now;
                     _doCountdown(diff);
                   }
