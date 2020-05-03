@@ -1,8 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quiver/async.dart';
 
 void main() => runApp(MyApp());
@@ -30,7 +28,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final database = FirebaseDatabase.instance.reference().child('countdown');
+  var database = Firestore.instance.collection('countdown');
 
   int _countdownTime = 1;
   bool _state = false;
@@ -44,6 +42,15 @@ class _MyHomePageState extends State<MyHomePage> {
     var now = DateTime.now().toUtc().millisecondsSinceEpoch;
     _secondsSinceEpoch = DateTime.now().add(Duration(minutes: _countdownTime)).millisecondsSinceEpoch;
     var diff =  _secondsSinceEpoch - now;
+    updateCountdown();
+    _doCountdown(diff);
+  }
+
+  void _overrideCountdown() {
+    _state = true;
+
+    var now = DateTime.now().toUtc().millisecondsSinceEpoch;
+    var diff = _secondsSinceEpoch - now;
     updateCountdown();
     _doCountdown(diff);
   }
@@ -62,19 +69,21 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void updateCountdown() {
-    database.update({
-        'start': _state,
-        'time': _countdownTime,
-        'timestamp': _secondsSinceEpoch
-      });
+    try {
+      database..document('1').updateData({
+          'start': _state,
+          'time': _countdownTime,
+          'epoch': _secondsSinceEpoch
+        });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   void _doCountdown(var length) {
-    _state = true;
-    updateCountdown();
     // Start Countdown
     countdownTimer = new CountdownTimer(
-      new Duration(milliseconds: length),
+      new Duration(milliseconds: length + 1000),
       new Duration(seconds: 1),
     );
 
@@ -89,10 +98,10 @@ class _MyHomePageState extends State<MyHomePage> {
       });
 
       sub.onDone(() {
-        showAlertDialog(context);
         _state = false;
         updateCountdown();
         sub.cancel();
+        showAlertDialog(context);
       });
     }); 
   }
@@ -129,11 +138,12 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             StreamBuilder(
-              stream: database.onValue,
-              builder: (context, snap) {
-                if (snap.hasData && !snap.hasError && snap.data.snapshot.value != null) {
+              stream: database.document('1').snapshots(),
+              builder: (context,snapshot) {
+                if (snapshot.hasData && !snapshot.hasError && snapshot.data.data.values != null) {
+                
                   if (_state == false) {
-                    Map data = snap.data.snapshot.value;
+                    var data = snapshot.data.data;
                     _countdownTime = data['time'];
                     _countdownText = "$_countdownTime:00";
                   } 
@@ -185,22 +195,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
               ]),
             StreamBuilder(
-              stream: database.onValue,
-              builder: (context, snap) {
-                if (snap.hasData && !snap.hasError && snap.data.snapshot.value != null) {
+              stream: database.document('1').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && !snapshot.hasError && snapshot.data.data.values != null) {
                   
-                  Map data = snap.data.snapshot.value;
+                  var data = snapshot.data;
                   _state = data['start'];
                   _countdownTime = data['time'];
-                  _secondsSinceEpoch = data['timestamp'];
+                  _secondsSinceEpoch = data['epoch'];
 
                   // Check if another device has triggered the countdown
-                  if (_state == true && countdownTimer.isRunning) {
+                  if (_state == true && countdownTimer.isRunning != null && countdownTimer.isRunning) {
                     var now = DateTime.now().toUtc().millisecondsSinceEpoch;
                     var diff = _secondsSinceEpoch - now;
                     _doCountdown(diff);
                   }
-
+                  String endTime = DateTime.fromMillisecondsSinceEpoch(_secondsSinceEpoch).toString();
                   return Padding(
                     padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
                     child: Column (
@@ -209,19 +219,20 @@ class _MyHomePageState extends State<MyHomePage> {
                         RaisedButton.icon(
                           textColor: Colors.white,
                           color: Colors.orange,
-                          onPressed: () => _doCountdown(_secondsSinceEpoch),
+                          onPressed: _overrideCountdown,
                           label: Text("Remote Override"),
                           icon: Icon(Icons.publish),
                           shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),),
-                        Text("Firebase Database", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                        Text("Firestore", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                         Text("start: $_state", style: TextStyle(fontSize: 16)),
                         Text("time: $_countdownTime", style: TextStyle(fontSize: 16)),
-                        Text("timestamp: $_secondsSinceEpoch", style: TextStyle(fontSize: 16))
+                        Text("epoch: $_secondsSinceEpoch", style: TextStyle(fontSize: 16)),
+                        Text("time stamp: $endTime", style: TextStyle(fontSize: 16))
                     ])
                   );
                 }
                 else
-                  return Text("No data from Firebase RTDB");
+                  return Text("No data from Firestore");
                 },
             ),
           ],

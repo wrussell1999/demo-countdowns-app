@@ -38,3 +38,4 @@ lib/generated_plugin_registrant.dart
 
 ios/Runner/GoogleService-Info.plist
 android/app/google-services.json
+firebase.js
