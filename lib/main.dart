@@ -172,8 +172,9 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: EdgeInsets.fromLTRB(30, 0, 30, 20),
               child:
                 TextField(
-                  onChanged: (value) => setState(() => _changeCountdown(value)),
-                  onSubmitted: (value) => setState(() => _changeCountdown(value)),
+                  onSubmitted: (value) {_changeCountdown(int.parse(value));},
+                  textInputAction: TextInputAction.done,
+                  autofocus: true,
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center
                 )
