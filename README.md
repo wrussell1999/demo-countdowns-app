@@ -2,7 +2,7 @@
 
 Controller for the Hackathon Demo Countdown app to control the data inside of Firebase.
 
-## Setup
+## Setup
 
 This app uses a Firebase Firestore NoSQL Database
 
