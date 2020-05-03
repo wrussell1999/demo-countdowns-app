@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:numberpicker/numberpicker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quiver/async.dart';
 
@@ -143,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (snapshot.hasData && !snapshot.hasError && snapshot.data.data.values != null) {
                 
                   if (_state == false) {
-                    var data = snapshot.data.data;
+                    Map data = snapshot.data.data;
                     _countdownTime = data['time'];
                     _countdownText = "$_countdownTime:00";
                   } 
@@ -167,39 +166,44 @@ class _MyHomePageState extends State<MyHomePage> {
             SizedBox(height: 80),
             new Text(
                 "Set Minutes:",
-                style: TextStyle(fontSize: 25),
+                style: TextStyle(fontSize: 15),
             ),
-            new NumberPicker.integer(
-                initialValue: _countdownTime,
-                minValue: 1,
-                maxValue: 9,
-                onChanged: (newValue) => setState(() => _changeCountdown(newValue))),
+            Padding(
+              padding: EdgeInsets.fromLTRB(30, 0, 30, 20),
+              child:
+                TextField(
+                  onChanged: (value) => setState(() => _changeCountdown(value)),
+                  onSubmitted: (value) => setState(() => _changeCountdown(value)),
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center
+                )
+              ),
             Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  new RaisedButton.icon(
-                    textColor: Colors.white,
-                    color: Colors.green,
-                    onPressed: _startCountdown,
-                    label: Text("Start"),
-                    icon: Icon(Icons.play_arrow),
-                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
-                  ),
-                  new RaisedButton.icon(
-                    textColor: Colors.white,
-                    color: Colors.red,
-                    onPressed: _stopCountdown,
-                    label: Text("Stop"),
-                    icon: Icon(Icons.stop),
-                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
-                  ),
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                new RaisedButton.icon(
+                  textColor: Colors.white,
+                  color: Colors.green,
+                  onPressed: _startCountdown,
+                  label: Text("Start"),
+                  icon: Icon(Icons.play_arrow),
+                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
+                ),
+                new RaisedButton.icon(
+                  textColor: Colors.white,
+                  color: Colors.red,
+                  onPressed: _stopCountdown,
+                  label: Text("Stop"),
+                  icon: Icon(Icons.stop),
+                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
+                ),
               ]),
             StreamBuilder(
               stream: database.document('1').snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData && !snapshot.hasError && snapshot.data.data.values != null) {
                   
-                  var data = snapshot.data;
+                  Map data = snapshot.data.data;
                   _state = data['start'];
                   _countdownTime = data['time'];
                   _secondsSinceEpoch = data['epoch'];
