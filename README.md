@@ -1,6 +1,6 @@
-# Hackathon Demo Countdown Controls
+# Demo Countdown - Controls (Flutter)
 
-Flutter app that controls Firebase
+Controller for the Hackathon Demo Countdown app to control the data inside of Firebase.
 
 ## Setup
 
