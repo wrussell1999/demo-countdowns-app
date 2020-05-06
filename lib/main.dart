@@ -99,8 +99,8 @@ class _MyHomePageState extends State<MyHomePage> {
       sub.onDone(() {
         _state = false;
         updateCountdown();
+        //showAlertDialog(context);
         sub.cancel();
-        showAlertDialog(context);
       });
     }); 
   }
@@ -210,7 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   _secondsSinceEpoch = data['epoch'];
 
                   // Check if another device has triggered the countdown
-                  if (_state == true && countdownTimer.isRunning != null && countdownTimer.isRunning) {
+                  if (_state == true && countdownTimer != null && countdownTimer.isRunning) {
                     var now = DateTime.now().toUtc().millisecondsSinceEpoch;
                     var diff = _secondsSinceEpoch - now;
                     _doCountdown(diff);
