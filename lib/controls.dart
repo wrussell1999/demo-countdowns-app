@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quiver/async.dart';
 
-class CountdownPage extends StatefulWidget {
+class ControlsPage extends StatefulWidget {
   @override
-  _CountdownPageState createState() => _CountdownPageState();
+  _ControlsPageState createState() => _ControlsPageState();
 }
 
-class _CountdownPageState extends State<CountdownPage> {
+class _ControlsPageState extends State<ControlsPage> {
   var database = Firestore.instance.collection('countdown');
 
   int _countdownTime = 1;

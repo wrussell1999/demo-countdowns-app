@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'countdown.dart';
+import 'controls.dart';
+import 'live.dart';
 
 
 class LandingPage extends StatelessWidget {
@@ -15,18 +16,17 @@ class LandingPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text("Welcome to the Demo Countdown App!"),
-            Text("Please join an existing countdown, or create a new one!"),
             RaisedButton.icon(
               textColor: Colors.white,
               color: Colors.purple,
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CountdownPage()),
+                  MaterialPageRoute(builder: (context) => LivePage()),
                 );
               },
-              label: Text('Create New Countdown'),
-              icon: Icon(Icons.control_point),
+              label: Text('Join Countdown'),
+              icon: Icon(Icons.timer),
               shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
             ),
             RaisedButton.icon(
@@ -35,11 +35,11 @@ class LandingPage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CountdownPage()),
+                  MaterialPageRoute(builder: (context) => ControlsPage()),
                 );
               },
-              label: Text('Join Countdown'),
-              icon: Icon(Icons.timer),
+              label: Text('Create New Countdown'),
+              icon: Icon(Icons.control_point),
               shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
             ),
           ],
