@@ -4,6 +4,9 @@ import 'package:quiver/async.dart';
 
 
 class LivePage extends StatefulWidget {
+  LivePage({Key key, this.name}) : super(key: key);
+
+  final String name;
 
   @override
   _LivePageState createState() => _LivePageState();
@@ -86,7 +89,7 @@ class _LivePageState extends State<LivePage> {
             children: <Widget>[
               Text(
                 'Time Remaining:',
-                style: new TextStyle(
+                style: TextStyle(
                   color: textColour,
                   fontSize: 20
                 )
@@ -119,6 +122,13 @@ class _LivePageState extends State<LivePage> {
                     return Text("Error: No Time");
                 },
               ),
+              Text(
+                '$widget.name',
+                style: TextStyle(
+                  color: textColour,
+                  fontSize: 20
+                )
+              )
             ],
           ),
         ),

@@ -3,8 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quiver/async.dart';
 
 class ControlsPage extends StatefulWidget {
+  ControlsPage({Key key, this.secret, this.name}) : super(key: key);
   
-  
+  final String secret;
+  final String name;
+
   @override
   _ControlsPageState createState() => _ControlsPageState();
 }
@@ -17,8 +20,6 @@ class _ControlsPageState extends State<ControlsPage> {
   int _secondsSinceEpoch = DateTime.now().toUtc().millisecondsSinceEpoch;
   CountdownTimer countdownTimer;
   String _countdownText = "0:00";
-  String secret = "abc";
-  String name = "countdown";
 
   void _startCountdown() {
     _state = true;
@@ -218,8 +219,8 @@ class _ControlsPageState extends State<ControlsPage> {
                           child: Column (
                             children: <Widget>[
                               Text("Countdown Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                              Text("Name: $name", style: TextStyle(fontSize: 16)),
-                              Text("Secret: $secret", style: TextStyle(fontSize: 16)),
+                              Text("Secret: $widget.secret", style: TextStyle(fontSize: 16)),
+                              Text("Name: $widget.name", style: TextStyle(fontSize: 16)),
                             ]
                           )
                         )
