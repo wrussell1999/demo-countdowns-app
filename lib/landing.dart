@@ -1,9 +1,6 @@
 import 'package:Controls/join.dart';
 import 'package:flutter/material.dart';
-
 import 'create.dart';
-import 'live.dart';
-
 
 class LandingPage extends StatelessWidget {
   @override

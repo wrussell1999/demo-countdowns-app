@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'landing.dart';
 
 void main() {
@@ -18,7 +17,6 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: LandingPage()
-      //home: CountdownPage(title: 'Countdown Live View'),
     );
   }
 }
