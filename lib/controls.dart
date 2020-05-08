@@ -1,14 +1,10 @@
+import 'countdown.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quiver/async.dart';
 
-class ControlsPage extends StatefulWidget {
-  ControlsPage({Key key, this.secret, this.name}) : super(key: key);
-  
+class ControlsPage extends StatefulWidget {  
   static const String route = '/admin';
-
-  final String secret;
-  final String name;
 
   @override
   _ControlsPageState createState() => _ControlsPageState();
@@ -95,9 +91,14 @@ class _ControlsPageState extends State<ControlsPage> {
 
   @override
   Widget build(BuildContext context) {
+
+  final CountdownControlsInfo args = ModalRoute.of(context).settings.arguments;
+  final String name = args.name;
+  final String secret = args.secret;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Countdown Controls"),
+        title: Text("Countdown Controls")
       ),
       body: new Center(
         child: new Column(
@@ -182,7 +183,6 @@ class _ControlsPageState extends State<ControlsPage> {
                     var diff = _secondsSinceEpoch - now;
                     _doCountdown(diff);
                   }
-                  String endTime = DateTime.fromMillisecondsSinceEpoch(_secondsSinceEpoch).toString();
                   return Padding(
                     padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
                     child: Column (
@@ -200,8 +200,8 @@ class _ControlsPageState extends State<ControlsPage> {
                           child: Column (
                             children: <Widget>[
                               Text("Countdown Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                              Text("Secret: $widget.secret", style: TextStyle(fontSize: 16)),
-                              Text("Name: $widget.name", style: TextStyle(fontSize: 16)),
+                              Text("Name: $name", style: TextStyle(fontSize: 16)),
+                              Text("Secret: $secret", style: TextStyle(fontSize: 16)),
                             ]
                           )
                         )

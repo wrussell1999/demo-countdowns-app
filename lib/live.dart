@@ -1,15 +1,11 @@
+import 'countdown.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quiver/async.dart';
 
 
 class LivePage extends StatefulWidget {
-  LivePage({Key key, this.name}) : super(key: key);
-
   static const String route = '/live';
-
-
-  final String name;
 
   @override
   _LivePageState createState() => _LivePageState();
@@ -80,9 +76,14 @@ class _LivePageState extends State<LivePage> {
 
   @override
   Widget build(BuildContext context) {
+    
+    final CountdownLiveInfo args = ModalRoute.of(context).settings.arguments;
+    final String name = args.name;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Countdown Live View"),
+        title: Text(args.name)
+        //title: Text("Countdown Live View"),
       ),
       body: Container(
         decoration: new BoxDecoration(color: backgroundColour),
@@ -126,7 +127,7 @@ class _LivePageState extends State<LivePage> {
                 },
               ),
               Text(
-                '$widget.name',
+                '$name',
                 style: TextStyle(
                   color: textColour,
                   fontSize: 20

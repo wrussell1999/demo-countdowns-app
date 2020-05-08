@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'controls.dart';
+import 'countdown.dart';
 
 class CreatePage extends StatelessWidget {
   
@@ -54,9 +55,14 @@ class CreatePage extends StatelessWidget {
 
                 if (name != "") {
                   // add to firestore
+
+                  secret = "Firebase";
                   warningMessage = "All good!";
                   warningColour = Colors.green;
-                  Navigator.of(context).pushNamed(ControlsPage.route);
+                  Navigator.of(context).pushNamed(
+                    ControlsPage.route,
+                    arguments: CountdownControlsInfo(name, secret),
+                  );
                 } else {
                   warningMessage = "Error!";
                   warningColour = Colors.red;

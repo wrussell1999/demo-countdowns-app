@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'live.dart';
+import 'countdown.dart';
 
 class JoinPage extends StatelessWidget {
   
@@ -84,7 +85,9 @@ class JoinPage extends StatelessWidget {
                 } else if (name != "" && secret == "") { 
                   warningMessage = "All good!";
                   warningColour = Colors.green;
-                  Navigator.of(context).pushNamed(LivePage.route);
+                  Navigator.of(context).pushNamed(
+                    LivePage.route,
+                    arguments: CountdownLiveInfo(name));
                 } else {
                   warningMessage = "Error!";
                   warningColour = Colors.red;
