@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'create.dart';
 
 class LandingPage extends StatelessWidget {
+
+  static const String route = '/';
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

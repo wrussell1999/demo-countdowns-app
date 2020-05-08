@@ -3,6 +3,8 @@ import 'controls.dart';
 
 class CreatePage extends StatelessWidget {
   
+  static const String route = '/create';
+  
   String name = "";
   String secret = "";
   Color warningColour = Colors.green;

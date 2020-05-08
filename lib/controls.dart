@@ -5,6 +5,8 @@ import 'package:quiver/async.dart';
 class ControlsPage extends StatefulWidget {
   ControlsPage({Key key, this.secret, this.name}) : super(key: key);
   
+  static const String route = '/admin';
+
   final String secret;
   final String name;
 

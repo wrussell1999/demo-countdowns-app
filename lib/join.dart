@@ -3,6 +3,8 @@ import 'live.dart';
 
 class JoinPage extends StatelessWidget {
   
+  static const String route = '/join';
+
   String name = "";
   String secret = "";
   Color warningColour = Colors.green;
