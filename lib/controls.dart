@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:quiver/async.dart';
 
 class ControlsPage extends StatefulWidget {
+  
+  
   @override
   _ControlsPageState createState() => _ControlsPageState();
 }
@@ -15,6 +17,8 @@ class _ControlsPageState extends State<ControlsPage> {
   int _secondsSinceEpoch = DateTime.now().toUtc().millisecondsSinceEpoch;
   CountdownTimer countdownTimer;
   String _countdownText = "0:00";
+  String secret = "abc";
+  String name = "countdown";
 
   void _startCountdown() {
     _state = true;
@@ -153,7 +157,7 @@ class _ControlsPageState extends State<ControlsPage> {
               padding: EdgeInsets.fromLTRB(30, 0, 30, 20),
               child:
                 TextField(
-                  onSubmitted: (value) {_changeCountdown(int.parse(value));},
+                  onChanged: (value) {_changeCountdown(int.parse(value));},
                   textInputAction: TextInputAction.done,
                   autofocus: true,
                   keyboardType: TextInputType.number,
@@ -209,12 +213,18 @@ class _ControlsPageState extends State<ControlsPage> {
                           label: Text("Remote Override"),
                           icon: Icon(Icons.publish),
                           shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),),
-                        Text("Firestore", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                        Text("start: $_state", style: TextStyle(fontSize: 16)),
-                        Text("time: $_countdownTime", style: TextStyle(fontSize: 16)),
-                        Text("epoch: $_secondsSinceEpoch", style: TextStyle(fontSize: 16)),
-                        Text("time stamp: $endTime", style: TextStyle(fontSize: 16))
-                    ])
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                          child: Column (
+                            children: <Widget>[
+                              Text("Countdown Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                              Text("Name: $name", style: TextStyle(fontSize: 16)),
+                              Text("Secret: $secret", style: TextStyle(fontSize: 16)),
+                            ]
+                          )
+                        )
+                      ]
+                    )
                   );
                 }
                 else
