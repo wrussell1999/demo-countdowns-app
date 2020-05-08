@@ -4,7 +4,7 @@ import 'controls.dart';
 class CreatePage extends StatelessWidget {
   
   static const String route = '/create';
-  
+
   String name = "";
   String secret = "";
   Color warningColour = Colors.green;
@@ -56,10 +56,7 @@ class CreatePage extends StatelessWidget {
                   // add to firestore
                   warningMessage = "All good!";
                   warningColour = Colors.green;
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ControlsPage()),
-                  );
+                  Navigator.of(context).pushNamed(ControlsPage.route);
                 } else {
                   warningMessage = "Error!";
                   warningColour = Colors.red;

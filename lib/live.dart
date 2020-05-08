@@ -6,7 +6,7 @@ import 'package:quiver/async.dart';
 class LivePage extends StatefulWidget {
   LivePage({Key key, this.name}) : super(key: key);
 
-  static const String route = '/';
+  static const String route = '/live';
 
 
   final String name;

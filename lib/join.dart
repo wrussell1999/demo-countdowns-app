@@ -84,12 +84,7 @@ class JoinPage extends StatelessWidget {
                 } else if (name != "" && secret == "") { 
                   warningMessage = "All good!";
                   warningColour = Colors.green;
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LivePage()),
-                  );
-                
-                
+                  Navigator.of(context).pushNamed(LivePage.route);
                 } else {
                   warningMessage = "Error!";
                   warningColour = Colors.red;
