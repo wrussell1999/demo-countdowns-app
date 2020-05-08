@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'controls.dart';
+import 'live.dart';
 
-class CreatePage extends StatelessWidget {
+class JoinPage extends StatelessWidget {
   
   String name = "";
   String secret = "";
@@ -13,13 +13,13 @@ class CreatePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create a Countdown'),
+        title: Text('Join a Countdown'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("Enter a name for your Countdown"),
+            Text("Enter the Countdown name to join"),
             Padding(
               padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
               child:
@@ -54,14 +54,14 @@ class CreatePage extends StatelessWidget {
                   warningColour = Colors.green;
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ControlsPage()),
+                    MaterialPageRoute(builder: (context) => LivePage()),
                   );
                 } else {
                   warningMessage = "Error!";
                   warningColour = Colors.red;
                 }
               },
-              label: Text('Create!'),
+              label: Text('Join!'),
               icon: Icon(Icons.timer),
               shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
             ),

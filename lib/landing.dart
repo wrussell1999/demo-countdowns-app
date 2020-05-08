@@ -1,3 +1,4 @@
+import 'package:Controls/join.dart';
 import 'package:flutter/material.dart';
 
 import 'create.dart';
@@ -25,7 +26,7 @@ class LandingPage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LivePage()),
+                  MaterialPageRoute(builder: (context) => JoinPage()),
                 );
               },
               label: Text('Join Countdown'),
