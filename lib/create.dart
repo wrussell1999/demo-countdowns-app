@@ -39,7 +39,10 @@ class CreatePage extends StatelessWidget {
                 textInputAction: TextInputAction.done,
                 autofocus: true,
                 keyboardType: TextInputType.text,
-                textAlign: TextAlign.center
+                textAlign: TextAlign.center,
+                decoration: new InputDecoration(
+                  hintText: 'Name'
+                ),
               ),
             ),
             RaisedButton.icon(

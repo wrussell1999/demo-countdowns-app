@@ -24,7 +24,7 @@ class JoinPage extends StatelessWidget {
               child:
                 TextField(
                 onChanged: (value) {
-                  print(value);
+                  print("Name: $value");
 
                   // query database
 
@@ -39,7 +39,37 @@ class JoinPage extends StatelessWidget {
                 textInputAction: TextInputAction.done,
                 autofocus: true,
                 keyboardType: TextInputType.text,
-                textAlign: TextAlign.center
+                textAlign: TextAlign.center,
+                decoration: new InputDecoration(
+                  hintText: 'Name'
+                ),
+              ),
+            ),
+            Text("Enter the secret to gain admin controls"),
+            Padding(
+              padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+              child:
+                TextField(
+                onChanged: (value) {
+                  print("Secret: $value");
+
+                  // query database
+
+                  if (value == "") {
+                    warningMessage = "Error!";
+                    warningColour = Colors.red;
+                  } else {
+                    name = value;
+                  }
+
+                },
+                textInputAction: TextInputAction.done,
+                autofocus: true,
+                keyboardType: TextInputType.text,
+                textAlign: TextAlign.center,
+                decoration: new InputDecoration(
+                  hintText: 'Secret'
+                ),
               ),
             ),
             RaisedButton.icon(
@@ -47,14 +77,17 @@ class JoinPage extends StatelessWidget {
               color: Colors.purple,
               onPressed: () {
 
-                if (name != "") {
+                if (name != "" && secret != "") {
                   // add to firestore
+                } else if (name != "" && secret == "") { 
                   warningMessage = "All good!";
                   warningColour = Colors.green;
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LivePage()),
                   );
+                
+                
                 } else {
                   warningMessage = "Error!";
                   warningColour = Colors.red;
