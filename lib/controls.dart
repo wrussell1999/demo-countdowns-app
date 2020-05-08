@@ -93,27 +93,6 @@ class _ControlsPageState extends State<ControlsPage> {
     }); 
   }
 
-  // Alert user that countdown has finished
-  showAlertDialog(BuildContext context) {
-    Widget okButton = FlatButton(
-      child: Text("OK"),
-      onPressed: () { Navigator.of(context).pop();},
-    );
-    AlertDialog alert = AlertDialog(
-      title: Text("Demo finished"),
-      content: Text("Please get the next team ready for demoing!"),
-      actions: [
-        okButton,
-      ],
-    );
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
