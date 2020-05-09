@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'controls.dart';
 import 'countdown.dart';
@@ -10,6 +11,17 @@ class CreatePage extends StatelessWidget {
   String secret = "";
   Color warningColour = Colors.green;
   String warningMessage = "";
+
+  final database = Firestore.instance.collection('countdowns');
+
+  bool checkName(String name) {
+    try {
+      database
+        ..where('name', isEqualTo: name).getDocuments();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,17 +39,15 @@ class CreatePage extends StatelessWidget {
               child:
                 TextField(
                 onChanged: (value) {
-                  print(value);
-
-                  // query database
-
                   if (value == "") {
                     warningMessage = "Error!";
                     warningColour = Colors.red;
-                  } else {
+                  } 
+                  else if (true) {
                     name = value;
+                    warningMessage = "No Errors!";
+                    warningColour = Colors.green;
                   }
-
                 },
                 textInputAction: TextInputAction.done,
                 autofocus: true,
@@ -52,11 +62,12 @@ class CreatePage extends StatelessWidget {
               textColor: Colors.white,
               color: Colors.purple,
               onPressed: () {
-
-                if (name != "") {
+                print(name);
+                if (name != "") { //&& checkName(name)) {
                   // add to firestore
+                  var document = database.document();
 
-                  secret = "Firebase";
+                  secret = "1";
                   warningMessage = "All good!";
                   warningColour = Colors.green;
                   Navigator.of(context).pushNamed(

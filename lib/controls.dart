@@ -12,12 +12,24 @@ class ControlsPage extends StatefulWidget {
 
 class _ControlsPageState extends State<ControlsPage> {
   var database = Firestore.instance.collection('countdown');
+  
+  String name;
+  String secret = "1";
 
   int _countdownTime = 1;
   bool _state = false;
   int _secondsSinceEpoch = DateTime.now().toUtc().millisecondsSinceEpoch;
   CountdownTimer countdownTimer;
   String _countdownText = "0:00";
+
+  @override
+  void initState() {
+    super.initState();
+    //final CountdownControlsInfo args = ModalRoute.of(context).settings.arguments;
+    //name = args.name;
+    //secret = args.secret;
+  }
+
 
   void _startCountdown() {
     _state = true;
@@ -52,8 +64,9 @@ class _ControlsPageState extends State<ControlsPage> {
   }
 
   void updateCountdown() {
+    print(secret);
     try {
-      database..document('1').updateData({
+      database.document("1").updateData({
           'start': _state,
           'time': _countdownTime,
           'epoch': _secondsSinceEpoch
@@ -91,10 +104,6 @@ class _ControlsPageState extends State<ControlsPage> {
 
   @override
   Widget build(BuildContext context) {
-
-  final CountdownControlsInfo args = ModalRoute.of(context).settings.arguments;
-  final String name = args.name;
-  final String secret = args.secret;
 
     return Scaffold(
       appBar: AppBar(

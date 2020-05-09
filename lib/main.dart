@@ -23,7 +23,7 @@ class App extends StatelessWidget {
         ControlsPage.route: (context) => ControlsPage()
       },
       debugShowCheckedModeBanner: false,
-      title: 'Demo Countdown',
+      title: 'Demo Countdowns',
       theme: ThemeData(
         primarySwatch: Colors.pink,
         visualDensity: VisualDensity.adaptivePlatformDensity,
