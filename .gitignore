@@ -39,3 +39,15 @@ lib/generated_plugin_registrant.dart
 ios/Runner/GoogleService-Info.plist
 android/app/google-services.json
 web/google-services.js
+
+
+**/secrets.json
+**/firebase-debug.log
+**/node_modules
+**/bower_components
+**/*.bak
+.idea
+.firebaserc
+.firebase/
+firestore.rules
+firestore.indexes.json
